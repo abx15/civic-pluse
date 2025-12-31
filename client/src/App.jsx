@@ -30,6 +30,9 @@ function App() {
           <Route path="/authority" element={<AuthorityRoute />}>
             <Route index element={<AuthorityDashboard />} />
           </Route>
+
+          {/* Fallback Route - Redirects unknown paths to Home/Login */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </SocketProvider>
     </AuthProvider>
