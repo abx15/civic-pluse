@@ -218,8 +218,8 @@ This project is licensed under the **MIT License**.
 
 **Author**: [Your Name/Arun K]
 
-- **GitHub**: [github.com/yourusername](https://github.com/yourusername)
-- **LinkedIn**: [linkedin.com/in/yourusername](https://linkedin.com/in/yourusername)
-- **Email**: contact@civicpulse.com
+- **GitHub**: [github.com/abx15](https://github.com/abx15)
+- **LinkedIn**: [linkedin.com/in/arun-kumar-a3b047353/](https://linkedin.com/in/arun-kumar-a3b047353/)
+- **Email**: developerarunwork@gmail.com
 
 Happy Coding! 🚀
