@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL =
+    import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_URL ||
+    'http://localhost:5000/api';
+
+console.log('API Base URL:', API_URL); // Log for debugging
 
 const api = axios.create({
     baseURL: API_URL,
@@ -12,9 +17,16 @@ const api = axios.create({
 // Add a request interceptor
 api.interceptors.request.use(
     (config) => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user && user.token) {
-            config.headers['Authorization'] = `Bearer ${user.token}`;
+        try {
+            const userStr = localStorage.getItem('user');
+            const user = userStr ? JSON.parse(userStr) : null;
+
+            if (user && user.token) {
+                config.headers['Authorization'] = `Bearer ${user.token}`;
+            }
+        } catch (error) {
+            console.error("Error accessing user token", error);
+            // Optionally clear storage if corrupt, but api.js might not should do side effects lightly
         }
         return config;
     },
