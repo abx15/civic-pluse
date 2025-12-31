@@ -1,6 +1,7 @@
 import { useState, useContext, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import logo from '../assets/logosos.png';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -143,7 +144,7 @@ const Register = () => {
         <div className="hidden md:flex items-center justify-center bg-black p-10">
           <div className="text-center text-white space-y-6">
             <img
-              src="/register-illustration.svg"   // yahan apni image ya svg
+              src={logo}   // yahan apni image ya svg
               alt="Register Illustration"
               className="w-80 mx-auto"
             />
