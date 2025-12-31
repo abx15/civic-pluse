@@ -18,6 +18,7 @@ const ReportIssue = () => {
         address: ''
     });
     const [file, setFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
 
     useGSAP(() => {
         gsap.from('.report-content', { duration: 0.6, y: 20, opacity: 0, ease: 'power2.out' });
@@ -59,9 +60,18 @@ const ReportIssue = () => {
         }
     };
 
+    const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+            setPreviewUrl(URL.createObjectURL(selectedFile));
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        const toastId = toast.loading('Submitting report...');
 
         const data = new FormData();
         data.append('title', formData.title);
@@ -75,11 +85,21 @@ const ReportIssue = () => {
         }
 
         try {
-            await issueService.createIssue(data);
-            toast.success('Issue reported successfully!');
+            const response = await issueService.createIssue(data);
+            toast.dismiss(toastId);
+
+            // Check specific notification statuses if available
+            let successMsg = 'Issue reported successfully!';
+            if (response.notificationStatus) {
+                if (response.notificationStatus.email) successMsg += ' Email sent.';
+                if (response.notificationStatus.whatsapp) successMsg += ' WhatsApp sent.';
+            }
+
+            toast.success(successMsg, { duration: 5000 });
             navigate('/');
         } catch (error) {
             console.error(error);
+            toast.dismiss(toastId);
             toast.error('Failed to report issue. Please try again.');
         } finally {
             setLoading(false);
@@ -156,12 +176,26 @@ const ReportIssue = () => {
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Upload Photo/Video</label>
-                    <input
-                        type="file"
-                        accept="image/*,video/*"
-                        className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        onChange={(e) => setFile(e.target.files[0])}
-                    />
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 transition cursor-pointer relative">
+                        <input
+                            type="file"
+                            accept="image/*,video/*"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onChange={handleFileChange}
+                        />
+                        {previewUrl ? (
+                            <div className="relative">
+                                <img src={previewUrl} alt="Preview" className="h-48 mx-auto rounded-lg object-contain shadow-md" />
+                                <p className="mt-2 text-sm text-gray-500">Click to change</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                <div className="text-4xl">📷</div>
+                                <p className="text-sm font-medium text-gray-600">Click to upload photo or video</p>
+                                <p className="text-xs text-gray-400">JPG, PNG, MP4 (Max 50MB)</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <div className="pt-4">
