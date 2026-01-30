@@ -62,9 +62,23 @@ app.use('/api/sos', sosRoutes);
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
 // Basic Route
-app.get('/', (req, res) => {
-    res.send('CivicPulse API is running...');
-});
+// Basic Route / Static Serve
+if (process.env.NODE_ENV === 'production') {
+    const path = require('path');
+    app.use(express.static(path.join(__dirname, 'public')));
+
+    app.get('*', (req, res) => {
+        // Skip API routes to avoid interfering with them if not caught above
+        if (req.originalUrl.startsWith('/api')) {
+            return res.status(404).json({ message: 'API Route not found' });
+        }
+        res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+    });
+} else {
+    app.get('/', (req, res) => {
+        res.send('CivicPulse API is running...');
+    });
+}
 
 // Global Error Handler
 app.use((err, req, res, next) => {
